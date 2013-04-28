@@ -9,7 +9,7 @@
 #
 ##############################################
 clear
-version="20130426"
+version="20130428"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -645,6 +645,43 @@ function installjava {
 
 }
 
+
+######## update ettercap
+function installettercap {
+	etterversion=`ettercap -version |awk '(NR==2) { print $2 }'`
+	echo -e "\e[1;31mThis option will update your Ettercap version to ettercap 0.7.6\e[0m"
+	echo -e "\e[1;31mThis may break the ettercap repo. Will have to see when ettercap is upgraded in the repos\e[0m"
+	echo -e "\e[1;31mYour current Version is : $etterversion\e[0m"
+	echo "Do you want to continue with the install? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+			echo -e "\e[31m[+] Installing depends.\e[0m"
+			apt-get install debhelper cmake bison flex libgtk2.0-dev libltdl3-dev libncurses-dev libncurses5-dev libnet1-dev libpcap-dev libpcre3-dev libssl-dev ghostscript python-gtk2-dev libpcap0.8-dev
+			echo -e "\e[32m[-] Done Installing Depends!\e[0m"
+			cd /tmp
+			echo -e "\e[31m[+] Downloading Ettercap.\e[0m"
+			git clone https://github.com/Ettercap/ettercap.git
+			echo -e "\e[31m[+] Building Ettercap.\e[0m"
+			cd ettercap
+			mkdir build
+			cd build
+			cmake ../
+			make
+			echo -e "\e[32m[-] Done Building Ettercap!\e[0m"
+			echo -e "\e[31m[+] Installing Ettercap.\e[0m"
+			make install
+			echo -e "\e[32m[-] Done Installing Ettercap!\e[0m"
+			echo -e "\e[31m[+] Deleting temp install files.\e[0m"
+			cd ../../
+			rm -rf ettercap/
+			echo -e "\e[32m[-] Done deleting install files!\e[0m"
+			echo -e "\e[1;31mYour current Version or Ettercap is : $etterversion\e[0m"
+		else
+			echo "Ok,maybe later !"
+		fi
+
+}
+
 function simpleducky {
 	if [ ! -e "/usr/bin/simple-ducky" ];then
 			echo "Simple-Ducky is not installed. Do you want to install it ? (Y/N)"
@@ -964,12 +1001,17 @@ echo -e "
                 Install Extras
 \033[31m#######################################################\033[m"
 
-select menusel in "Bleeding Edge Repos" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
+select menusel in "Bleeding Edge Repos" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
 case $menusel in
 	"Bleeding Edge Repos")
 		bleedingedge
 		pause 
 		extras;;
+		
+	"Ettercap 0.76")
+		installettercap
+		pause 
+		extras ;;
 	
 	"AngryIP Scanner")
 		installangryip
