@@ -9,7 +9,7 @@
 #
 ##############################################
 clear
-version="20130428"
+version="20130502"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -364,7 +364,7 @@ if [ ! -e "/usr/bin/ipscan" ];then
 			echo "AngryIp Scanner is not installed. Do you want to install it ? (Y/N)"
 			read install
 			if [[ $install = Y || $install = y ]] ; then	
-				echo -e"\033[31m====== Installing Angry IP Scanner ======\033[m"
+				echo -e "\033[31m====== Installing Angry IP Scanner ======\033[m"
 				# Install angry-IP-scanner
 				cd /root/ &>/dev/null
 				if [ $(uname -m) == "x86_64" ] ; then
@@ -412,6 +412,8 @@ function installnautilusopenterm {
 	read install
 	if [[ $install = Y || $install = y ]] ; then
 		apt-get -y install nautilus-open-terminal
+		gsettings set org.gnome.desktop.default-applications.terminal exec /usr/bin/terminator
+		gsettings set org.gnome.desktop.default-applications.terminal exec-arg "-x"
 	else
 		echo "Ok,maybe later !"
 	fi
@@ -422,10 +424,10 @@ function installunicornscan {
 		echo "This will install Unicornscan. Do you want to install it ? (Y/N)"
 		read install
 			if [[ $install = Y || $install = y ]] ; then
-				echo -e"\033[31m====== Installing Flex ======\033[m"
+				echo -e "\033[31m====== Installing Flex ======\033[m"
 				apt-get install flex &>/dev/null
-				echo -e"\033[32m====== Done Installing Flex ======\033[m"
-				echo -e"\033[31m====== Installing Unicornscan ======\033[m"
+				echo -e "\033[32m====== Done Installing Flex ======\033[m"
+				echo -e "\033[31m====== Installing Unicornscan ======\033[m"
 				cd /root/ &>/dev/null
 				wget -N http://unicornscan.org/releases/unicornscan-0.4.7-2.tar.bz2 
 				bzip2 -cd unicornscan-0.4.7-2.tar.bz2 | tar xf - 
@@ -474,14 +476,14 @@ function easycreds {
 		echo "This will install Easy-Creds. Do you want to install it ? (Y/N)"
 		read install
 			if [[ $install = Y || $install = y ]] ; then
-				echo -e"\033[31m====== Installing Depends ======\033[m"
+				echo -e "\033[31m====== Installing Depends ======\033[m"
 				apt-get -y install screen hostapd dsniff dhcp3-server ipcalc aircrack-ng
-				echo -e"\033[32m====== Done Installing Depends ======\033[m"
-				echo -e"\033[31m====== Installing Easy-Creds ======\033[m"
+				echo -e "\033[32m====== Done Installing Depends ======\033[m"
+				echo -e "\033[31m====== Installing Easy-Creds ======\033[m"
 				git clone git://github.com/brav0hax/easy-creds.git /opt/easy-creds
-				ln -s /opt/easy-creds/easy-creds.sh  /usr/bin/easy-creds.sh
+				ln -s /opt/easy-creds/easy-creds.sh  /usr/bin/easy-creds
 				cd /root/ &>/dev/null
-				echo -e "\033[32===== All Done ======\033[m"
+				echo -e "\033[32m===== All Done ======\033[m"
 				echo "Launching easy-creds in new window !"
 				gnome-terminal -t "Easy-Creds" -e easy-creds 2>/dev/null & sleep 2				
 			else
