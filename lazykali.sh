@@ -9,7 +9,7 @@
 #
 ##############################################
 clear
-version="20130502"
+version="20130503"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -34,7 +34,7 @@ if [ ! -e "/usr/bin/lazykali" ];then
 		lazykali
 		exit 1
 	else
-		echo "Ok, not installing then !"
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 	fi
 else
 	echo "Script is installed"
@@ -351,10 +351,10 @@ function bleedingedge {
 				apt-get update
 				apt-get -y upgrade
 			else
-				echo "Ok, not installing then !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
-			echo "Bleeding Edge Repo already there"
+			echo -e "\e[32m[-] Bleeding Edge Repo already there!\e[0m"
 			sleep 1
 		fi
 }
@@ -380,10 +380,10 @@ if [ ! -e "/usr/bin/ipscan" ];then
 				extras
 				exit 1
 			else
-				echo "Ok, not installing then !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
-			echo "AngryIP Scanner is installed."
+			echo -e "\e[32m[-] AngryIP Scanner is installed!\e[0m"
 		fi
 }
 
@@ -391,9 +391,10 @@ function installterminator {
 	echo "This will install Terminator. Do you want to install it ? (Y/N)"
 	read install
 	if [[ $install = Y || $install = y ]] ; then
-		apt-get -y install terminator 
+		apt-get -y install terminator
+		echo -e "\e[32m[-] Done Installing Terminator!\e[0m" 
 	else
-		echo "Ok,maybe later !"
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 	fi
 }
 
@@ -402,8 +403,9 @@ function installxchat {
 	read install
 	if [[ $install = Y || $install = y ]] ; then
 		apt-get -y install xchat 
+		echo -e "\e[32m[-] Done Installing XChat!\e[0m"
 	else
-		echo "Ok,maybe later !"
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 	fi
 }
 
@@ -414,9 +416,11 @@ function installnautilusopenterm {
 		apt-get -y install nautilus-open-terminal
 		gsettings set org.gnome.desktop.default-applications.terminal exec /usr/bin/terminator
 		gsettings set org.gnome.desktop.default-applications.terminal exec-arg "-x"
+		echo -e "\e[32m[-] Done Installing Nautilus Open Terminal!\e[0m"
 	else
-		echo "Ok,maybe later !"
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 	fi
+	
 }
 
 function installunicornscan {
@@ -437,10 +441,10 @@ function installunicornscan {
 				echo -e "\033[32m====== All Done ======\033[m"
 				echo "Launch a new terminal and enter unicornscan to run."
 			else
-				echo "Ok,maybe later !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
-			echo "Unicornscan is installed."
+			echo -e "\e[32m[-] Done Installing Unicornscan!\e[0m"
 			echo "Launch a new terminal and enter unicornscan to run."
 			
 		fi	
@@ -462,7 +466,7 @@ function installyamas {
 			gnome-terminal -t "Yamas" -x bash yamas 2>/dev/null & sleep 2
 			exit 1
 		else
-			echo "Ok, not installing then !"
+			echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 		fi
 	else
 		echo "Script is installed"
@@ -487,7 +491,7 @@ function easycreds {
 				echo "Launching easy-creds in new window !"
 				gnome-terminal -t "Easy-Creds" -e easy-creds 2>/dev/null & sleep 2				
 			else
-				echo "Ok,maybe later !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
 			echo "Easy-Creds is installed."
@@ -515,7 +519,7 @@ function pwnstar {
 				sniffspoof
 				exit 1
 			else
-				echo "Ok, not installing then !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
 			echo "PwnStar is installed, Launching it now!"
@@ -577,18 +581,16 @@ function installsimpleducky {
 			echo "Simple-Ducky is not installed. Do you want to install it ? (Y/N)"
 			read install
 			if [[ $install = Y || $install = y ]] ; then
-				wget https://code.google.com/p/simple-ducky-payload-generator/downloads/detail?name=install_v1.0.8.sh&can=2&q=
-				chmod +x install_v1.0.8.sh
-				./install_v1.0.8.sh
-				rm install_v1.0.8.sh
+				wget http://simple-ducky-payload-generator.googlecode.com/files/install_v1.0.9.sh
+				chmod +x install_v1.0.9.sh
+				./install_v1.0.9.sh
+				rm install_v1.0.9.sh
 				echo -e "\e[1;34mDone! Be sure to run Option's 5 and 6 prior to generating any payloads.\e[0m"
-				pause
-				extras				
 			else
-				echo "Ok,maybe later !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
-			echo "Simple-Ducky is installed."
+			echo -e "\e[32m[-] Simple-Ducky is installed!\e[0m"
 			echo "Launch a new terminal and enter simple-ducky to run."			
 		fi	
 }
@@ -642,7 +644,7 @@ function installjava {
 				echo ""
 			fi
 		else
-			echo "Ok,maybe later !"
+			echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 		fi
 
 }
@@ -679,7 +681,7 @@ function installettercap {
 			echo -e "\e[32m[-] Done deleting install files!\e[0m"
 			echo -e "\e[1;31mYour current Version or Ettercap is : $etterversion\e[0m"
 		else
-			echo "Ok,maybe later !"
+			echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 		fi
 
 }
@@ -693,7 +695,7 @@ function simpleducky {
 				payloadgen
 				exit 1
 			else
-				echo "Ok, not installing then !"
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 			fi
 		else
 			echo -e "\e[31m[+] Launching Simple-Ducky now!\nBe sure to run Option's 5 and 6 prior to generating any payloads.\e[0m"
@@ -949,7 +951,7 @@ function installsubterfuge {
 		rm SubterfugePublicBeta5.0.tar.gz
 		echo -e "\e[32m[-] Done Installing Subterfuge!\e[0m"		
 	else
-		echo "Ok,maybe later !"
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 	fi
 }
 ##### Subterfuge
@@ -978,7 +980,6 @@ function ghostphisher {
 ######## Install Ghost-Phisher
 function installghostphisher {
 	echo "This will install Ghost-Phisher. Do you want to install it ? (Y/N)"
-	echo "Ghost-Phisher may be buggy right now with Kali. I am sure it will be fixed soon."
 	read install
 	if [[ $install = Y || $install = y ]] ; then
 		echo -e "\e[31m[+] Installing Ghost-Phisher now!\e[0m"
@@ -986,9 +987,9 @@ function installghostphisher {
 		wget http://ghost-phisher.googlecode.com/files/Ghost-Phisher_1.5_all.deb
 		dpkg -i Ghost-Phisher_1.5_all.deb
 		rm Ghost-Phisher_1.5_all.deb
-		echo -e "\e[32m[-] Done Installing Subterfuge!\e[0m"		
+		echo -e "\e[32m[-] Done Installing GhostFisher!\e[0m"		
 	else
-		echo "Ok,maybe later !"
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
 	fi
 	
 	
@@ -1070,8 +1071,8 @@ case $menusel in
 		installunicornscan
 		installnautilusopenterm
 		installsimpleducky
-		installsubterfuge
 		installghostphisher
+		installsubterfuge
 		echo -e "\e[32m[-] Done Installing Extra's\e[0m"
 		pause
 		extras ;;
