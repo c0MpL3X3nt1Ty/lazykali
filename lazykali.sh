@@ -5,11 +5,11 @@
 #
 # LazyKali by Reaperz73
 # Just made this for when I feel lazy
-# Installs quite a few extras to a Fresh Kali
+# Installs quite a few extras to a Fresh Kali:)
 #
 ##############################################
 clear
-version="20130503"
+version="20130504"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
