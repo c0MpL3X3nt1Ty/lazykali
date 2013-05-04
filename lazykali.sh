@@ -686,6 +686,50 @@ function installettercap {
 
 }
 
+#################################################################################
+# Install Google Chrome
+#################################################################################
+function installgooglechrome {
+	echo -e "\e[1;31mThis option will install Google Chrome Latest Version!\e[0m"
+	echo "Do you want to install it ? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+			read -p "Are you using a 32bit or 64bit operating system [ENTER: 32 or 64]? " operatingsys
+			if [ "$operatingsys" == "32" ]; then 
+				echo -e "\e[1;31m[+] Downloading google-chrome-stable_current_i386\e[0m"
+				wget wget https://dl.google.com/linux/direct/google-chrome-stable_current_i386.deb
+				echo -e "\e[32m[-] Done with download!\e[0m"
+				echo -e "\e[1;31m[+] Installing google-chrome\e[0m"
+				dpkg -i google-chrome-stable_current_i386.deb
+				cp /opt/google/chrome/google-chrome.desktop /usr/share/applications/google-chrome.desktop
+				echo -e "\e[1;31m[+] Patching to run as root!\e[0m"
+				head -n -1 /opt/google/chrome/google-chrome > temp.txt ; mv temp.txt /opt/google/chrome/google-chrome
+				echo 'exec -a "$0" "$HERE/chrome"  "$@" --user-data-dir' >> /opt/google/chrome/google-chrome
+				chmod +x /opt/google/chrome/google-chrome
+				echo -e "\e[32m[-] Done patching!\e[0m"
+				rm google-chrome-stable_current_i386.deb
+				echo -e "\e[32m[-] Done installing enjoy chrome!\e[0m"
+			else
+				echo -e "\e[1;31m[+] Downloading google-chrome-stable_current_amd64\e[0m"
+				wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+				echo -e "\e[32m[-] Done with download!\e[0m"
+				echo -e "\e[1;31m[+] Installing google-chrome\e[0m"
+				dpkg -i google-chrome-stable_current_amd64.deb
+				cp /opt/google/chrome/google-chrome.desktop /usr/share/applications/google-chrome.desktop
+				echo -e "\e[1;31m[+] Patching to run as root!\e[0m"
+				head -n -1 /opt/google/chrome/google-chrome > temp.txt ; mv temp.txt /opt/google/chrome/google-chrome
+				echo 'exec -a "$0" "$HERE/chrome"  "$@" --user-data-dir' >> /opt/google/chrome/google-chrome
+				chmod +x /opt/google/chrome/google-chrome
+				echo -e "\e[32m[-] Done patching!\e[0m"
+				rm google-chrome-stable_current_amd64.deb
+				echo -e "\e[32m[-] Done installing enjoy chrome!\e[0m"
+			fi
+		else
+			echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+		fi
+
+}
+
 function simpleducky {
 	if [ ! -e "/usr/bin/simple-ducky" ];then
 			echo "Simple-Ducky is not installed. Do you want to install it ? (Y/N)"
@@ -1004,13 +1048,18 @@ echo -e "
                 Install Extras
 \033[31m#######################################################\033[m"
 
-select menusel in "Bleeding Edge Repos" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
+select menusel in "Bleeding Edge Repos" "Google Chrome" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
 case $menusel in
 	"Bleeding Edge Repos")
 		bleedingedge
 		pause 
 		extras;;
 		
+	"Google Chrome")
+		installgooglechrome
+		pause 
+		extras;;
+				
 	"Ettercap 0.76")
 		installettercap
 		pause 
@@ -1065,6 +1114,7 @@ case $menusel in
 		echo -e "\e[36mJava is install seperately choose it from the extra's menu\e[0m"
 		echo -e "\e[31m[+] Installing Extra's\e[0m"
 		bleedingedge
+		installgooglechrome
 		installangryip
 		installterminator
 		installxchat
