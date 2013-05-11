@@ -9,7 +9,7 @@
 #
 ##############################################
 clear
-version="20130504"
+version="20130510"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -146,7 +146,8 @@ case $menusel in
 	"Update Kali")
 		clear
 		echo -e "\033[32mUpdating Kali\033[m"
-		apt-get update && apt-get -y dist-upgrade 
+		#apt-get update && apt-get -y dist-upgrade
+		apt-get update && apt-get -y upgrade 
 		echo -e "\033[32mDone updating kali\033[m"
 		pause
 		clear ;;
@@ -377,7 +378,6 @@ if [ ! -e "/usr/bin/ipscan" ];then
 					dpkg -i ipscan_3.2_i386.deb &>/dev/null
 				fi
 				pause
-				extras
 				exit 1
 			else
 				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
@@ -438,6 +438,7 @@ function installunicornscan {
 				cd unicornscan-0.4.7/ 
 				./configure CFLAGS=-D_GNU_SOURCE && make && make install
 				cd /root/ &>/dev/null
+				rm -rf unicornscan-0.4.7*
 				echo -e "\033[32m====== All Done ======\033[m"
 				echo "Launch a new terminal and enter unicornscan to run."
 			else
@@ -1038,7 +1039,59 @@ function installghostphisher {
 	
 	
 }
+
+######## Install Flash
+function installflash {
+	echo "This will install Flash. Do you want to install it ? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+		echo -e "\e[31m[+] Installing Flash now!\e[0m"
+		apt-get -y install flashplugin-nonfree
+		update-flashplugin-nonfree --install
+		echo -e "\e[32m[-] Done Installing Flash!\e[0m"		
+	else
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+	fi
 	
+	
+}
+
+######## Install smbexec
+function installsmbexec {
+	echo "This will install Smbexec. Do you want to install it ? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+		echo -e "\e[31m[+] Installing Smbexec now!\e[0m"
+		cd /opt
+		git clone https://github.com/brav0hax/smbexec.git
+		cd smbexec
+		./install.sh
+		echo -e "\e[32m[-] Done Installing Smbexec part 1!\e[0m"
+		echo -e "\e[31m[+] Now for part 2 Compile the binaries, select option 4!\e[0m"
+		./install.sh
+		echo -e "\e[32m[-] Done Installing Smbexec!\e[0m"
+		echo "Open a terminal and type smbexec, have fun!"		
+	else
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+	fi
+	
+	
+}	
+
+######## Install xssf
+function installxssf {
+	echo "This will install Xssf. Do you want to install it ? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+		echo -e "\e[31m[+] Installing Xssf now!\e[0m"
+		cd /opt/metasploit/apps/pro/msf3
+		svn export http://xssf.googlecode.com/svn/trunk ./ --force
+		echo -e "\e[32m[-] Done Installing Xssf!\e[0m"
+		echo -e "\e[32m[-]Open a terminal launch msfconsole \n   then inside metasploit type 'load xssf Port=666' or what everport number you want\e[0m"
+	else
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+	fi
+}	
 
 ######### Install extras
 function extras {
@@ -1048,7 +1101,7 @@ echo -e "
                 Install Extras
 \033[31m#######################################################\033[m"
 
-select menusel in "Bleeding Edge Repos" "Google Chrome" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
+select menusel in "Bleeding Edge Repos" "Google Chrome" "Flash" "Smbexec" "Xssf" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
 case $menusel in
 	"Bleeding Edge Repos")
 		bleedingedge
@@ -1057,6 +1110,21 @@ case $menusel in
 		
 	"Google Chrome")
 		installgooglechrome
+		pause 
+		extras;;
+		
+	"Flash")
+		installflash
+		pause 
+		extras;;
+		
+	"Smbexec")
+		installsmbexec
+		pause 
+		extras;;
+		
+	"Xssf")
+		installxssf
 		pause 
 		extras;;
 				
@@ -1115,9 +1183,12 @@ case $menusel in
 		echo -e "\e[31m[+] Installing Extra's\e[0m"
 		bleedingedge
 		installgooglechrome
+		installflash
 		installangryip
 		installterminator
 		installxchat
+		installsmbexec
+		installxssf
 		installunicornscan
 		installnautilusopenterm
 		installsimpleducky
