@@ -6,10 +6,12 @@
 # LazyKali by Reaperz73
 # Just made this for when I feel lazy
 # Installs quite a few extras to a Fresh Kali:)
+# questions comments or request email me @:
+# reaperz73revived@gmail.com
 #
 ##############################################
 clear
-version="20130510"
+version="20130518"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -225,7 +227,7 @@ echo -e "
 \033[31m#######################################################\033[m
                   OpenVas Services
 \033[31m#######################################################\033[m"
-select menusel in "Start OpenVas Services" "Stop OpenVas Services" "Back to Main"; do
+select menusel in "Start OpenVas Services" "Stop OpenVas Services" "Rollback V5" "Back to Main"; do
 case $menusel in
 	"Start OpenVas Services")
 		openvasstart
@@ -234,6 +236,11 @@ case $menusel in
 	
 	"Stop OpenVas Services")
 		openvasstop
+		pause
+		OpenVas ;;
+		
+	"Rollback V5")
+		rollbackopenvas
 		pause
 		OpenVas ;;
 
@@ -252,6 +259,42 @@ break
 
 done
 }
+
+######## Update Exploitdb
+function exploitdb {
+clear
+echo -e "
+\033[31m#######################################################\033[m
+                          Exploit-DB
+\033[31m#######################################################\033[m"
+select menusel in "Update Exploitdb" "Searchsploit" "Back to Main"; do
+case $menusel in
+	"Update Exploitdb")
+		updateexploitdb
+		pause 
+		exploitdb;;
+	
+	"Searchsploit")
+		searchsploit
+		pause
+		exploitdb ;;
+
+	"Back to Main")
+		clear
+		mainmenu ;;
+		
+	*)
+		screwup
+		OpenVas ;;
+	
+		
+esac
+
+break
+
+done
+}
+
 
 ######## Sniffing and spoofing menu
 function sniffspoof {
@@ -542,7 +585,7 @@ function hamfer {
 			iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 1000
 			sslstrip -f -a -k -l 1000 -w /root/out.txt &
 			sleep 4
-			xterm -geometry 90x3-1-1 -T "arpspoof" -e arpspoof -i $IFACE $DEFAULT_ROUTE &
+			xterm -T "arpspoof" -e arpspoof -i $IFACE $DEFAULT_ROUTE &
 			sleep 2
 			#xterm -e /usr/share/hamster-sidejack/ferret -i $IFACE 2>/dev/null & sleep 2
 			cd /usr/share/hamster-sidejack
@@ -980,6 +1023,66 @@ echo
 echo -e "\033[01;32m All Done!! :) \033[m"
 }
 
+######## Rollback Openvas to Version 5
+function rollbackopenvas {
+echo -e "\033[31mThis script will roll OpenVas back to Version 5\033[m"
+echo -e "\033[31myou may need this if you broke Openvas with apt-get dist-upgrade\033[m"
+echo "Do you want to rollback ? (Y/N)"
+read install
+if [[ $install = Y || $install = y ]] ; then	
+		echo -e "\033[31m====== Rolling OpenVas back to V5 ======\033[m"
+		apt-get remove --purge greenbone-security-assistant libopenvas6 openvas-administrator openvas-manager openvas-cli openvas-scanner
+		mkdir openvasfix
+		cd openvasfix
+		if [ $(uname -m) == "x86_64" ] ; then
+			#64 bit system
+			wget http://repo.kali.org/kali/pool/main/o/openvas-manager/openvas-manager_3.0.4-1kali0_amd64.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas-administrator/openvas-administrator_1.2.1-1kali0_amd64.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas-cli/openvas-cli_1.1.5-1kali0_amd64.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas-scanner/openvas-scanner_3.3.1-1kali1_amd64.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas/openvas_1.1_amd64.deb
+			wget http://repo.kali.org/kali/pool/main/g/greenbone-security-assistant/greenbone-security-assistant_3.0.3-1kali0_amd64.deb
+			wget http://repo.kali.org/kali/pool/main/libo/libopenvas/libopenvas5_5.0.4-1kali0_amd64.deb
+		else
+			#32 bit system
+			wget http://repo.kali.org/kali/pool/main/o/openvas-manager/openvas-manager_3.0.4-1kali0_i386.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas-administrator/openvas-administrator_1.2.1-1kali0_i386.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas-cli/openvas-cli_1.1.5-1kali0_i386.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas-scanner/openvas-scanner_3.3.1-1kali1_i386.deb
+			wget http://repo.kali.org/kali/pool/main/o/openvas/openvas_1.1_i386.deb
+			wget http://repo.kali.org/kali/pool/main/g/greenbone-security-assistant/greenbone-security-assistant_3.0.3-1kali0_i386.deb
+			wget http://repo.kali.org/kali/pool/main/libo/libopenvas/libopenvas5_5.0.4-1kali0_i386.deb
+		fi
+		dpkg -i *
+		apt-get install gsd kali-linux kali-linux-full
+		wget --no-check-certificate https://svn.wald.intevation.org/svn/openvas/trunk/tools/openvas-check-setup
+		chmod +x openvas-check-setup
+		./openvas-check-setup --v5
+		else
+			echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+		fi
+		echo -e "\e[32m[-] Done!\e[0m"	
+}
+
+### Update Exploitdb
+function updateexploitdb {
+	echo -e "\033[31mThis script will update your Exploitdb\033[m"
+	cd /usr/share/exploitdb
+	wget http://www.exploit-db.com/archive.tar.bz2
+	tar xvfj archive.tar.bz2
+	rm -rf /opt/exploit-db/archive.tar.bz2
+	echo -e "\e[32m[-] Done Updating Exploitdb!\e[0m"	
+}
+
+#### Searchsploit
+function searchsploit {
+	echo -e "\033[31mWhat do you want to Hack Today?\033[m"
+	echo -e "\033[31mEnter a search term and hit Enter\033[m"
+	read searchterm
+	gnome-terminal --maximize -t "Seachsploit" --working-directory=WORK_DIR -x bash -c "searchsploit $searchterm; echo -e '\e[32m[-] Close this window when done!\e[0m'; bash" 2>/dev/null & sleep 2
+	
+}
+
 #### Install Subterfuge
 function installsubterfuge {
 	echo "This will install Subterfuge. Do you want to install it ? (Y/N)"
@@ -1236,7 +1339,7 @@ Connection Info :-----------------------------------------------
   Gateway: \033[32m$DEFAULT_ROUTE\033[m Interface: \033[32m$IFACE\033[m My LAN Ip: \033[32m$MYIP\033[m
 \033[31m################################################################\033[m"
 
-select menusel in "Update Kali" "Metasploit Services" "OpenVas Services" "Sniffing/Spoofing" "Install Extras" "Payload Gen" "HELP!" "Credits" "EXIT PROGRAM"; do
+select menusel in "Update Kali" "Metasploit Services" "OpenVas Services" "Exploitdb" "Sniffing/Spoofing" "Install Extras" "Payload Gen" "HELP!" "Credits" "EXIT PROGRAM"; do
 case $menusel in
 	"Update Kali")
 		updatekali
@@ -1248,6 +1351,10 @@ case $menusel in
 			
 	"OpenVas Services")
 		OpenVas
+		clear ;;
+		
+	"Exploitdb")
+		exploitdb
 		clear ;;
 	
 	"Sniffing/Spoofing")
