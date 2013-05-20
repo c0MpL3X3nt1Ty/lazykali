@@ -11,7 +11,7 @@
 #
 ##############################################
 clear
-version="20130518"
+version="20130519"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -61,12 +61,12 @@ $changelog"
 			chmod +x $0
 			echo "[-] Script updated !"
 			if [[ $0 != '/usr/bin/yamas' && $ask_for_install = 'y' ]];then
-				echo -e "Do you want to install it so that you can launch it with \"yamas\" ?"
+				echo -e "Do you want to install it so that you can launch it with \"lazykali\" ?"
 				read install
 				if [[ $install = Y || $install = y ]];then #do not proceed to install if using installed version : updating it already "installed" it over.
 					cp $0 /usr/bin/lazykali
 					chmod +x /usr/bin/lazykali
-					echo "Script should now be installed, launching yamas !"
+					echo "Script should now be installed, launching lazykali !"
 					sleep 3
 					lazykali
 					exit 1
@@ -117,7 +117,7 @@ https://github.com/brav0hax/easy-creds
 VulpiArgenti for PwnStar
 http://code.google.com/p/pwn-star/
 
-Simple-Ducky
+skysploit for Simple-Ducky
 http://code.google.com/p/simple-ducky-payload-generator/
 
 0sm0s1z for Subterfuge
@@ -625,10 +625,10 @@ function installsimpleducky {
 			echo "Simple-Ducky is not installed. Do you want to install it ? (Y/N)"
 			read install
 			if [[ $install = Y || $install = y ]] ; then
-				wget http://simple-ducky-payload-generator.googlecode.com/files/install_v1.0.9.sh
-				chmod +x install_v1.0.9.sh
-				./install_v1.0.9.sh
-				rm install_v1.0.9.sh
+				wget https://simple-ducky-payload-generator.googlecode.com/files/installer_v1.1.0_debian.sh
+				chmod +x installer_v1.1.0_debian.sh
+				./installer_v1.1.0_debian.sh
+				rm installer_v1.1.0_debian.sh
 				echo -e "\e[1;34mDone! Be sure to run Option's 5 and 6 prior to generating any payloads.\e[0m"
 			else
 				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
@@ -1068,9 +1068,10 @@ if [[ $install = Y || $install = y ]] ; then
 function updateexploitdb {
 	echo -e "\033[31mThis script will update your Exploitdb\033[m"
 	cd /usr/share/exploitdb
+	rm -rf archive.tar.bz2
 	wget http://www.exploit-db.com/archive.tar.bz2
 	tar xvfj archive.tar.bz2
-	rm -rf /opt/exploit-db/archive.tar.bz2
+	rm -rf archive.tar.bz2
 	echo -e "\e[32m[-] Done Updating Exploitdb!\e[0m"	
 }
 
