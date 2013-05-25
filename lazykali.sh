@@ -11,7 +11,7 @@
 #
 ##############################################
 clear
-version="20130519"
+version="20130524"
 #some variables
 DEFAULT_ROUTE=$(ip route show default | awk '/default/ {print $3}')
 IFACE=$(ip route show | awk '(NR == 2) {print $3}')
@@ -518,6 +518,32 @@ function installyamas {
 		sleep 1
 	fi		
 }
+
+
+######## install hackpack
+function installhackpack {
+	echo "This will install Hackpack. Do you want to install it ? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+		cd /tmp
+		wget http://lazykali.googlecode.com/files/hackpack.tar.gz
+		tar zxvf hackpack.tar.gz
+		cd hackpack
+		echo -e "\033[31m====== Installing ======\033[m"
+		./install.sh
+		echo -e "\e[32m[-] Done !\e[0m"
+		cd ../
+		echo -e "\033[31m====== Cleaning up ======\033[m"
+		rm hackpack.tar.gz
+		rm -rf hackpack
+		echo -e "\e[32m[-] Done !\e[0m"
+	else
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+	fi
+	
+}
+
+
 
 function easycreds {
 	if [ ! -f /usr/bin/easy-creds ]; then
@@ -1205,11 +1231,16 @@ echo -e "
                 Install Extras
 \033[31m#######################################################\033[m"
 
-select menusel in "Bleeding Edge Repos" "Google Chrome" "Flash" "Smbexec" "Xssf" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
+select menusel in "Bleeding Edge Repos" "Hackpack" "Google Chrome" "Flash" "Smbexec" "Xssf" "Ettercap 0.76" "AngryIP Scanner" "Terminator" "Xchat" "Unicornscan" "Nautilus Open Terminal" "Simple-Ducky" "Subterfuge" "Ghost-Phisher" "Java" "Install All" "Back to Main"; do
 case $menusel in
 	"Bleeding Edge Repos")
 		bleedingedge
 		pause 
+		extras;;
+		
+	"Hackpack")
+		installhackpack
+		pause
 		extras;;
 		
 	"Google Chrome")
@@ -1286,6 +1317,7 @@ case $menusel in
 		echo -e "\e[36mJava is install seperately choose it from the extra's menu\e[0m"
 		echo -e "\e[31m[+] Installing Extra's\e[0m"
 		bleedingedge
+		installhackpack
 		installgooglechrome
 		installflash
 		installangryip
